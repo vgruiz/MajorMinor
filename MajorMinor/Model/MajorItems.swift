@@ -11,5 +11,5 @@ import Foundation
 class MajorItems {
     @objc dynamic var name : String = ""
     @objc dynamic var complete : Bool = false
-    let minorItems = [MinorItem]()
+    //let minorItems = [MinorItem]()
 }

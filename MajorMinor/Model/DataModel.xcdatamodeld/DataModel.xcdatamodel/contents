@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14490.99" systemVersion="18D109" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="MajorItem" representedClassName="MajorItem" syncable="YES" codeGenerationType="class">
+        <attribute name="complete" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <relationship name="minorItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MinorItem" inverseName="parentCategory" inverseEntity="MinorItem" syncable="YES"/>
+    </entity>
+    <entity name="MinorItem" representedClassName="MinorItem" syncable="YES" codeGenerationType="class">
+        <attribute name="complete" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <relationship name="parentCategory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MajorItem" inverseName="minorItems" inverseEntity="MajorItem" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="MajorItem" positionX="-18.3359375" positionY="50.3359375" width="128" height="88"/>
+        <element name="MinorItem" positionX="177.48828125" positionY="53.95703125" width="128" height="88"/>
+    </elements>
+</model>

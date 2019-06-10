@@ -8,15 +8,21 @@
 
 import UIKit
 import ChameleonFramework
-import RealmSwift
+//import RealmSwift
+import CoreData
 
 class MajorViewController: UITableViewController{
     
-    var majorItems = [MajorItems]()
+    var majorItems = [MajorItem]()
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.backgroundColor = UIColor.randomFlat()
+        
+        tableView.backgroundColor = UIColor.flatWhite()
+        loadItems()
+        //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
     }
     
     //MARK: - TableView Datasource Methods
@@ -35,7 +41,9 @@ class MajorViewController: UITableViewController{
     
     //MARK: - TableView Delegate Methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(majorItems[indexPath.row].name)
+        //print(majorItems[indexPath.row].name)
+        
+        
         performSegue(withIdentifier: "goToMinorList", sender: self)
     }
     
@@ -43,11 +51,11 @@ class MajorViewController: UITableViewController{
         let destVC = segue.destination as! MinorViewController
         
         let indexPath = tableView.indexPathForSelectedRow!
-        let selectedMajorItem = majorItems[indexPath.row]
-        destVC.selectedMajorItem = selectedMajorItem
+        destVC.selectedMajorItem = majorItems[indexPath.row]
     }
     
-    //MARK: - Add Major Item
+    //MARK: - Data Manipulation Methods
+
     @IBAction func addMajorItem(_ sender: Any) {
         let alert = UIAlertController(title: "Alert Title", message: "Alert Message", preferredStyle: .alert)
         var textBox = UITextField()
@@ -60,10 +68,10 @@ class MajorViewController: UITableViewController{
         
         let addAction = UIAlertAction(title: "Add", style: .default) { (action) in
             newItemTitle = textBox.text as! String ?? "Blank Item"
-            let newMajorItem = MajorItems()
+            let newMajorItem = MajorItem(context: self.context)
             newMajorItem.name = newItemTitle
             self.majorItems.append(newMajorItem)
-            self.tableView.reloadData()
+            self.saveItems()
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
@@ -76,4 +84,22 @@ class MajorViewController: UITableViewController{
         present(alert, animated: true)
     }
     
+    func saveItems () {
+        do {
+            try context.save()
+        } catch {
+            print("Error saving items \(error)")
+        }
+        
+        self.tableView.reloadData()
+    }
+    
+    func loadItems() {
+        let request : NSFetchRequest<MajorItem> = MajorItem.fetchRequest()
+        do {
+            majorItems = try context.fetch(request)
+        } catch {
+            print("Error fetching MajorItem list \(error)")
+        }
+    }
 }

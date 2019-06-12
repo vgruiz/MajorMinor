@@ -11,9 +11,18 @@ import ChameleonFramework
 //import RealmSwift
 import CoreData
 
+
+class CustomMajorCell: UITableViewCell {
+    @IBOutlet weak var statusLabel: UILabel!
+    
+}
+
+
 class MajorViewController: UITableViewController{
     
     var majorItems = [MajorItem]()
+    var numCompletedTasks: Int!
+    var numTotalTasks: Int!
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
@@ -25,16 +34,39 @@ class MajorViewController: UITableViewController{
         //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        tableView.reloadData()
+    }
+    
     //MARK: - TableView Datasource Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return majorItems.count ?? 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MajorCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MajorCell", for: indexPath) as! CustomMajorCell
         
         let item = majorItems[indexPath.row]
         cell.textLabel?.text = item.name
+        
+        //update statusLabel
+        numCompletedTasks = 0
+        numTotalTasks = 0
+        
+        //majorItems[indexPath.row].mino
+        let minorItems = majorItems[indexPath.row].minorItems
+        let y = minorItems?.allObjects
+        let z = y as! [MinorItem]
+        for x in z {
+            if x.complete {
+                numCompletedTasks += 1
+                numTotalTasks += 1
+            } else {
+                numTotalTasks += 1
+            }
+        }
+        cell.statusLabel.text = "\(numCompletedTasks ?? 0) / \(numTotalTasks ?? 0)"
+
         
         return cell
     }

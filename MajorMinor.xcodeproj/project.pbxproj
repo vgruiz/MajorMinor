@@ -139,7 +139,7 @@
 				296DEA6A225B242D00028388 /* Sources */,
 				296DEA6B225B242D00028388 /* Frameworks */,
 				296DEA6C225B242D00028388 /* Resources */,
-				C69508976CA9A26E73113E18 /* [CP] Embed Pods Frameworks */,
+				E3E57B2F510BCDE77918A6D1 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -219,7 +219,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C69508976CA9A26E73113E18 /* [CP] Embed Pods Frameworks */ = {
+		E3E57B2F510BCDE77918A6D1 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -229,16 +229,12 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-MajorMinor/Pods-MajorMinor-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
-				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
-				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChameleonFramework.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

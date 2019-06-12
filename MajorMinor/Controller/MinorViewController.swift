@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import RealmSwift
+//import RealmSwift
 import ChameleonFramework
 import CoreData
 
@@ -57,7 +57,7 @@ class MinorViewController: UITableViewController {
         let item = minorItems[indexPath.row]
         item.complete = !item.complete
         //context.delete(minorItems[indexPath.row])
-        minorItems.remove(at: indexPath.row)
+        //minorItems.remove(at: indexPath.row)
         saveItems()
         tableView.reloadData()
     }

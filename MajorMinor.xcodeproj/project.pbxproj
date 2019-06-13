@@ -28,7 +28,6 @@
 		296DEA7E225B242F00028388 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		296DEA80225B242F00028388 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		29A0577622ACA09500A37BA9 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
-		29A0577A22AE2B1B00A37BA9 /* cp */ = {isa = PBXFileReference; lastKnownFileType = text; name = cp; path = ../../../cp; sourceTree = "<group>"; };
 		29DE692B226EB81300823124 /* MinorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinorViewController.swift; sourceTree = "<group>"; };
 		64FA13510EA2B6881E8E7938 /* Pods-MajorMinor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MajorMinor.release.xcconfig"; path = "Pods/Target Support Files/Pods-MajorMinor/Pods-MajorMinor.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -66,7 +65,6 @@
 			isa = PBXGroup;
 			children = (
 				292DD7FE225C7C7600DBEAAC /* MajorViewController.swift */,
-				29A0577A22AE2B1B00A37BA9 /* cp */,
 				29DE692B226EB81300823124 /* MinorViewController.swift */,
 			);
 			path = Controller;
@@ -229,12 +227,16 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-MajorMinor/Pods-MajorMinor-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChameleonFramework.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

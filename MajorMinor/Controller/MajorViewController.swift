@@ -8,8 +8,7 @@
 
 import UIKit
 import ChameleonFramework
-//import RealmSwift
-import CoreData
+import RealmSwift
 
 
 class CustomMajorCell: UITableViewCell {
@@ -19,6 +18,8 @@ class CustomMajorCell: UITableViewCell {
 
 
 class MajorViewController: UITableViewController{
+    
+    let realm = try! Realm()
     
     var majorItems = [MajorItem]()
     var numCompletedTasks: Int!
@@ -55,17 +56,17 @@ class MajorViewController: UITableViewController{
         
         //majorItems[indexPath.row].mino
         let minorItems = majorItems[indexPath.row].minorItems
-        let y = minorItems?.allObjects
-        let z = y as! [MinorItem]
-        for x in z {
-            if x.complete {
-                numCompletedTasks += 1
-                numTotalTasks += 1
-            } else {
-                numTotalTasks += 1
-            }
-        }
-        cell.statusLabel.text = "\(numCompletedTasks ?? 0) / \(numTotalTasks ?? 0)"
+//        let y = minorItems?.allObjects
+//        let z = y as! [MinorItem]
+//        for x in z {
+//            if x.complete {
+//                numCompletedTasks += 1
+//                numTotalTasks += 1
+//            } else {
+//                numTotalTasks += 1
+//            }
+//        }
+//        cell.statusLabel.text = "\(numCompletedTasks ?? 0) / \(numTotalTasks ?? 0)"
 
         
         return cell
@@ -100,10 +101,10 @@ class MajorViewController: UITableViewController{
         
         let addAction = UIAlertAction(title: "Add", style: .default) { (action) in
             newItemTitle = textBox.text as! String ?? "Blank Item"
-            let newMajorItem = MajorItem(context: self.context)
+            let newMajorItem = MajorItem()
             newMajorItem.name = newItemTitle
             self.majorItems.append(newMajorItem)
-            self.saveItems()
+            self.saveItems(newMajorItem: newMajorItem)
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
@@ -116,9 +117,11 @@ class MajorViewController: UITableViewController{
         present(alert, animated: true)
     }
     
-    func saveItems () {
+    func saveItems(newMajorItem: MajorItem) {
         do {
-            try context.save()
+            try realm.write {
+                try realm.add(newMajorItem)
+            }
         } catch {
             print("Error saving items \(error)")
         }
@@ -127,11 +130,11 @@ class MajorViewController: UITableViewController{
     }
     
     func loadItems() {
-        let request : NSFetchRequest<MajorItem> = MajorItem.fetchRequest()
-        do {
-            majorItems = try context.fetch(request)
-        } catch {
-            print("Error fetching MajorItem list \(error)")
-        }
+//        let request : NSFetchRequest<MajorItem> = MajorItem.fetchRequest()
+//        do {
+//            majorItems = try context.fetch(request)
+//        } catch {
+//            print("Error fetching MajorItem list \(error)")
+//        }
     }
 }

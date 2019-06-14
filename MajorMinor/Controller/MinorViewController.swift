@@ -78,9 +78,9 @@ class MinorViewController: UITableViewController {
                 action.isEnabled = true
             }
             
-            let newMinorItem = MinorItem(context: self.context)
+            let newMinorItem = MinorItem()
             newMinorItem.name = textBox.text as! String
-            newMinorItem.parentCategory = self.selectedMajorItem
+            //newMinorItem.parent = self.selectedMajorItem
             self.minorItems.append(newMinorItem)
             self.saveItems()
         }
@@ -105,16 +105,16 @@ class MinorViewController: UITableViewController {
     }
     
     func loadItems() {
-        let predicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedMajorItem!.name!)
-        
-        let request : NSFetchRequest<MinorItem> = MinorItem.fetchRequest()
-        request.predicate = predicate
-        
-        do {
-            minorItems = try context.fetch(request)
-        } catch {
-            print("Error fetching data from context \(error)")
-        }
+//        let predicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedMajorItem!.name!)
+//
+//        let request : NSFetchRequest<MinorItem> = MinorItem.fetchRequest()
+//        request.predicate = predicate
+//
+//        do {
+//            minorItems = try context.fetch(request)
+//        } catch {
+//            print("Error fetching data from context \(error)")
+//        }
         
     }
 }

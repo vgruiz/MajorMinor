@@ -30,6 +30,7 @@
 		296DEA7B225B242F00028388 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		296DEA7E225B242F00028388 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		296DEA80225B242F00028388 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		299F99D522B8B5E900614860 /* testingInverseRelationships.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = testingInverseRelationships.playground; path = MajorMinor/Experimentation/testingInverseRelationships.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		29DE692B226EB81300823124 /* MinorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinorViewController.swift; sourceTree = "<group>"; };
 		64FA13510EA2B6881E8E7938 /* Pods-MajorMinor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MajorMinor.release.xcconfig"; path = "Pods/Target Support Files/Pods-MajorMinor/Pods-MajorMinor.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -76,6 +77,7 @@
 		296DEA65225B242D00028388 = {
 			isa = PBXGroup;
 			children = (
+				299F99D522B8B5E900614860 /* testingInverseRelationships.playground */,
 				296DEA70225B242D00028388 /* MajorMinor */,
 				296DEA6F225B242D00028388 /* Products */,
 				ADF8ECAEBE8E4A98BFD32315 /* Pods */,

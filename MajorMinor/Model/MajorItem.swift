@@ -13,4 +13,5 @@ class MajorItem: Object {
     @objc dynamic var name : String = ""
     @objc dynamic var complete: Bool = false
     let minorItems = List<MinorItem>()
+    //let minorItem = LinkingObjects(fromType: MinorItem.self, property: "majorCategory")
 }

@@ -8,8 +8,7 @@
 
 import UIKit
 import ChameleonFramework
-//import RealmSwift
-import CoreData
+import RealmSwift
 
 
 class CustomMajorCell: UITableViewCell {
@@ -17,54 +16,51 @@ class CustomMajorCell: UITableViewCell {
     
 }
 
-
 class MajorViewController: UITableViewController{
     
-    var majorItems = [MajorItem]()
+    let realm = try! Realm()
+    
+    var majorItems: Results<MajorItem>?
     var numCompletedTasks: Int!
     var numTotalTasks: Int!
     
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         tableView.backgroundColor = UIColor.flatWhite()
         loadItems()
-        //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        tableView.reloadData()
     }
     
     //MARK: - TableView Datasource Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return majorItems.count ?? 1
+        return majorItems?.count ?? 1
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        tableView.reloadData()
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "MajorCell", for: indexPath) as! CustomMajorCell
         
-        let item = majorItems[indexPath.row]
-        cell.textLabel?.text = item.name
+        cell.textLabel?.text = majorItems?[indexPath.row].name
         
         //update statusLabel
         numCompletedTasks = 0
         numTotalTasks = 0
         
-        //majorItems[indexPath.row].mino
-        let minorItems = majorItems[indexPath.row].minorItems
-        let y = minorItems?.allObjects
-        let z = y as! [MinorItem]
-        for x in z {
-            if x.complete {
-                numCompletedTasks += 1
-                numTotalTasks += 1
-            } else {
-                numTotalTasks += 1
+        if let minorItems = majorItems?[indexPath.row].minorItems {
+            for x in minorItems {
+                if x.complete {
+                    numCompletedTasks += 1
+                    numTotalTasks += 1
+                } else {
+                    numTotalTasks += 1
+                }
             }
         }
+        
         cell.statusLabel.text = "\(numCompletedTasks ?? 0) / \(numTotalTasks ?? 0)"
 
         
@@ -73,17 +69,15 @@ class MajorViewController: UITableViewController{
     
     //MARK: - TableView Delegate Methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //print(majorItems[indexPath.row].name)
-        
-        
         performSegue(withIdentifier: "goToMinorList", sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destVC = segue.destination as! MinorViewController
         
-        let indexPath = tableView.indexPathForSelectedRow!
-        destVC.selectedMajorItem = majorItems[indexPath.row]
+        if let indexPath = tableView.indexPathForSelectedRow {
+            destVC.selectedMajorItem = majorItems?[indexPath.row]
+        }
     }
     
     //MARK: - Data Manipulation Methods
@@ -100,10 +94,9 @@ class MajorViewController: UITableViewController{
         
         let addAction = UIAlertAction(title: "Add", style: .default) { (action) in
             newItemTitle = textBox.text as! String ?? "Blank Item"
-            let newMajorItem = MajorItem(context: self.context)
+            let newMajorItem = MajorItem()
             newMajorItem.name = newItemTitle
-            self.majorItems.append(newMajorItem)
-            self.saveItems()
+            self.save(newMajorItem: newMajorItem)
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
@@ -116,9 +109,11 @@ class MajorViewController: UITableViewController{
         present(alert, animated: true)
     }
     
-    func saveItems () {
+    func save(newMajorItem: MajorItem) {
         do {
-            try context.save()
+            try realm.write {
+                realm.add(newMajorItem)
+            }
         } catch {
             print("Error saving items \(error)")
         }
@@ -127,11 +122,7 @@ class MajorViewController: UITableViewController{
     }
     
     func loadItems() {
-        let request : NSFetchRequest<MajorItem> = MajorItem.fetchRequest()
-        do {
-            majorItems = try context.fetch(request)
-        } catch {
-            print("Error fetching MajorItem list \(error)")
-        }
+        majorItems = realm.objects(MajorItem.self)
+        tableView.reloadData()
     }
 }

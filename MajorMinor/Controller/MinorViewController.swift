@@ -7,21 +7,21 @@
 //
 
 import UIKit
-//import RealmSwift
+import RealmSwift
 import ChameleonFramework
-import CoreData
 
 
 class MinorViewController: UITableViewController {
     
-    var minorItems = [MinorItem]()
+    let realm = try! Realm()
+    
+    var minorItems : Results<MinorItem>?
     var selectedMajorItem : MajorItem?
     {
         didSet{
             loadItems()
         }
     }
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,35 +35,45 @@ class MinorViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return minorItems.count ?? 1
+        return minorItems?.count ?? 1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MinorCell", for: indexPath)
 
-        let minorItem = minorItems[indexPath.row]
-        cell.textLabel?.text = minorItem.name
-        
-        if minorItem.complete {
-            cell.accessoryType = .checkmark
+        if let minorItem = minorItems?[indexPath.row] {
+            cell.textLabel?.text = minorItem.name
+            
+            if minorItem.complete {
+                cell.accessoryType = .checkmark
+            } else {
+                cell.accessoryType = .none
+            }
         } else {
-            cell.accessoryType = .none
+            cell.textLabel?.text = "No Minor Items Created Yet"
         }
-
+        
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let item = minorItems[indexPath.row]
-        item.complete = !item.complete
-        //context.delete(minorItems[indexPath.row])
-        //minorItems.remove(at: indexPath.row)
-        saveItems()
+        
+        if let item = minorItems?[indexPath.row] {
+            do {
+                try realm.write {
+                    item.complete = !item.complete
+                }
+            } catch {
+                print("Error saving complete status \(error)")
+            }
+        }
+        
         tableView.reloadData()
     }
 
     @IBAction func addMinorItem(_ sender: UIBarButtonItem) {
         var textBox = UITextField()
+        var newItemTitle: String = ""
         
         let alert = UIAlertController(title: "Add Minor Item", message: "test", preferredStyle: .alert)
         
@@ -78,11 +88,20 @@ class MinorViewController: UITableViewController {
                 action.isEnabled = true
             }
             
-            let newMinorItem = MinorItem(context: self.context)
-            newMinorItem.name = textBox.text as! String
-            newMinorItem.parentCategory = self.selectedMajorItem
-            self.minorItems.append(newMinorItem)
-            self.saveItems()
+            if let currentMajorItem = self.selectedMajorItem {
+                do {
+                    try self.realm.write {
+                        let newMinorItem = MinorItem()
+                        newMinorItem.name = textBox.text as! String
+                        currentMajorItem.minorItems.append(newMinorItem)
+                    }
+                } catch {
+                    print("Error adding a new minor item \(error)")
+                }
+                
+            }
+        
+            self.tableView.reloadData()
         }
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
@@ -94,27 +113,20 @@ class MinorViewController: UITableViewController {
         present(alert, animated: true)
     }
     
-    func saveItems() {
+    func save(newMinorItem: MinorItem) {
         do {
-            try context.save()
+            try realm.write {
+                try realm.add(newMinorItem)
+            }
         } catch {
-            print("Error saving context \(error)")
+            print("Error saving items \(error)")
         }
         
         self.tableView.reloadData()
     }
     
     func loadItems() {
-        let predicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedMajorItem!.name!)
-        
-        let request : NSFetchRequest<MinorItem> = MinorItem.fetchRequest()
-        request.predicate = predicate
-        
-        do {
-            minorItems = try context.fetch(request)
-        } catch {
-            print("Error fetching data from context \(error)")
-        }
-        
+        minorItems = selectedMajorItem?.minorItems.sorted(byKeyPath: "name", ascending: true)
+        tableView.reloadData()
     }
 }

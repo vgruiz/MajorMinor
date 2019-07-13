@@ -9,72 +9,174 @@
 import UIKit
 import ChameleonFramework
 import RealmSwift
+import SwipeCellKit
 
-
-class CustomMajorCell: UITableViewCell {
-    @IBOutlet weak var statusLabel: UILabel!
+class MajorViewController: UITableViewController, UIGestureRecognizerDelegate, UITextFieldDelegate {
     
-}
-
-class MajorViewController: UITableViewController{
-    
-    let realm = try! Realm()
-    
+    lazy var realm = try! Realm()
     var majorItems: Results<MajorItem>?
     var numCompletedTasks: Int!
     var numTotalTasks: Int!
+    var currentVisibleTextFields = [UITextField]()
+    var tapGesture = UITapGestureRecognizer()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.backgroundColor = UIColor.flatWhite()
+        tableView.backgroundColor = UIColor.init(hexString: "#ffe5b8")
         loadItems()
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 70
+        
+//        tapGesture = UITapGestureRecognizer(target: self, action: #selector(endTextFieldEditing))
+//        tableView.addGestureRecognizer(tapGesture)
+//        tapGesture.delegate = self
     }
+    
+    @objc func endTextFieldEditing() {
+        print("endTextFieldEditing() pressed")
+
+        for cur in tableView.visibleCells {
+            let curX = cur as! MajorItemCell
+            
+            if curX.reuseIdentifier == "AddNewItemCell" {
+                return
+            }
+            
+            if curX.titleTextField.isFirstResponder {
+                curX.titleTextField.resignFirstResponder()
+                //curX.updateMajorItemLabel()
+                //curX.disableTapAwayGesture()
+            }
+        }
+    }
+    
+//    @objc func enableTapAwayGesture() {
+//        print("this weird ass function is called")
+//        for cur in tableView.visibleCells {
+//            let curX = cur as! MajorItemCell
+//            curX.addGestureRecognizer(tapGesture)
+//        }
+//
+//        //        for cur in tableView.visibleCells {
+////            let curX = cur as! MajorItemCell
+////
+////            if curX.reuseIdentifier == "AddNewItemCell" {
+////                return
+////            }
+////
+////            curX.enableTapAwayGesture()
+////        }
+//    }
     
     //MARK: - TableView Datasource Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return majorItems?.count ?? 1
+        //return majorItems?.count ?? 1
+        return (majorItems?.count ?? 0) + 1 //the extra 1 is for the "add new item" button
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        //for when you return to the MajorViewController, to update the statusLabel
         tableView.reloadData()
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.row != majorItems?.count {
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MajorItemCell", for: indexPath) as! MajorItemCell
+            
+            cell.delegate = self
+            cell.majorItem = majorItems?[indexPath.row]
+            cell.majorItemCellTitle.text = majorItems?[indexPath.row].name
+            cell.titleTextField.text = majorItems?[indexPath.row].name
+            
+            //update statusLabel
+            numCompletedTasks = 0
+            numTotalTasks = 0
+            
+            if let minorItems = majorItems?[indexPath.row].minorItems {
+                for x in minorItems {
+                    if x.complete {
+                        numCompletedTasks += 1
+                        numTotalTasks += 1
+                    } else {
+                        numTotalTasks += 1
+                    }
+                }
+            }
+            
+            cell.configureCell()
+            
+            cell.listStatusLabel.text = "\(numCompletedTasks ?? 0) / \(numTotalTasks ?? 0)"
+            
+            cell.backgroundColor = UIColor.init(hexString: "#f7f1e3")
+            
+            return cell
+
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "AddNewItemCell", for: indexPath) as! MajorItemCell
+            
+            cell.delegate = self
+            
+            return cell
+            
+        }
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MajorCell", for: indexPath) as! CustomMajorCell
+    }
+
+    //MARK: - TableView Delegate Methods
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(indexPath.row)
+        let selCell = tableView.cellForRow(at: indexPath) as! MajorItemCell
+        var responderResigned = false
         
-        cell.textLabel?.text = majorItems?[indexPath.row].name
-        
-        //update statusLabel
-        numCompletedTasks = 0
-        numTotalTasks = 0
-        
-        if let minorItems = majorItems?[indexPath.row].minorItems {
-            for x in minorItems {
-                if x.complete {
-                    numCompletedTasks += 1
-                    numTotalTasks += 1
-                } else {
-                    numTotalTasks += 1
+        if selCell.reuseIdentifier == "AddNewItemCell" {
+            print("Adding new item.")
+            self.addMajorItem(self)
+            return
+        } else {
+            for cur in tableView.visibleCells as! [MajorItemCell] {
+                if cur.reuseIdentifier != "AddNewItemCell" {
+                    if cur.titleTextField.isFirstResponder {
+                        cur.titleTextField.resignFirstResponder()
+                        responderResigned = true
+                        selCell.setSelected(false, animated: false)
+                    }
                 }
             }
         }
         
-        cell.statusLabel.text = "\(numCompletedTasks ?? 0) / \(numTotalTasks ?? 0)"
-
+        if !responderResigned {
+            performSegue(withIdentifier: "goToMinorList", sender: self)
+        }
+            
         
-        return cell
-    }
-    
-    //MARK: - TableView Delegate Methods
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "goToMinorList", sender: self)
+//        for curX in tableView.visibleCells as! [MajorItemCell] {
+            //let curX = cur as! MajorItemCell
+            
+//            if selCell.reuseIdentifier == "AddNewItemCell" {
+//                print("Adding new item.")
+//                self.addMajorItem(self)
+//                return
+//            } else if selCell.isEqual(curX) && curX.titleTextField.isFirstResponder {
+//                curX.titleTextField.resignFirstResponder()
+//                performSegue(withIdentifier: "goToMinorList", sender: self)
+//            } else if curX.titleTextField.isFirstResponder {
+//                curX.titleTextField.resignFirstResponder()
+//                return
+//            }
+//        }
+//
+//        if tableView.cellForRow(at: indexPath)?.reuseIdentifier == "AddNewItemCell" {
+//        } else {
+//            performSegue(withIdentifier: "goToMinorList", sender: self)
+//        }
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destVC = segue.destination as! MinorViewController
-        
+
         if let indexPath = tableView.indexPathForSelectedRow {
             destVC.selectedMajorItem = majorItems?[indexPath.row]
         }
@@ -93,7 +195,7 @@ class MajorViewController: UITableViewController{
         }
         
         let addAction = UIAlertAction(title: "Add", style: .default) { (action) in
-            newItemTitle = textBox.text as! String ?? "Blank Item"
+            newItemTitle = textBox.text!
             let newMajorItem = MajorItem()
             newMajorItem.name = newItemTitle
             self.save(newMajorItem: newMajorItem)
@@ -123,6 +225,48 @@ class MajorViewController: UITableViewController{
     
     func loadItems() {
         majorItems = realm.objects(MajorItem.self)
+        
         tableView.reloadData()
+    }    
+    
+}
+
+//MARK: SwipeCellKit Delegate Methods
+
+extension MajorViewController: SwipeTableViewCellDelegate {
+
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+
+        guard orientation == .right else { return nil }
+
+        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+            // handle action by updating model with deletion
+
+            if let itemForDeletion = self.majorItems?[indexPath.row] {
+                do {
+                    try self.realm.write {
+                        self.realm.delete(itemForDeletion)
+                    }
+                } catch {
+                    print("Error deleting Major Item, \(error)")
+                }
+            }
+            //self.tableView.deleteRows(at: [indexPath], with: .none)
+            self.majorItems = self.realm.objects(MajorItem.self)
+            self.loadItems()
+        }
+
+        // customize the action appearance
+        deleteAction.image = UIImage(named: "delete-icon")
+        return [deleteAction]
+    }
+//
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+        var options = SwipeOptions()
+
+        options.expansionStyle = .selection
+
+        return options
+
     }
 }

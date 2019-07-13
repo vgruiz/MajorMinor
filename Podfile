@@ -6,6 +6,6 @@ target 'MajorMinor' do
   # Pods for MajorMinor
 pod 'ChameleonFramework'
 pod 'RealmSwift'
-
+pod 'SwipeCellKit'
 
 end

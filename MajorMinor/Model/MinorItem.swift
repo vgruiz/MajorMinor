@@ -12,5 +12,8 @@ import RealmSwift
 class MinorItem: Object {
     @objc dynamic var name : String = ""
     @objc dynamic var complete: Bool = false
+    @objc dynamic var discarded: Bool = false
+    @objc dynamic var index = Int()
+    //@objc dynamic var test = Int()
     var parent = LinkingObjects(fromType: MajorItem.self, property: "minorItems")
 }

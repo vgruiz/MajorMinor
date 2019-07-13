@@ -11,21 +11,62 @@ import ChameleonFramework
 import RealmSwift
 import SwipeCellKit
 
-class MajorViewController: UITableViewController {
+class MajorViewController: UITableViewController, UIGestureRecognizerDelegate, UITextFieldDelegate {
     
     lazy var realm = try! Realm()
     var majorItems: Results<MajorItem>?
     var numCompletedTasks: Int!
     var numTotalTasks: Int!
+    var currentVisibleTextFields = [UITextField]()
+    var tapGesture = UITapGestureRecognizer()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.backgroundColor = UIColor.init(hexString: "#ffe5b8")
         loadItems()
         tableView.rowHeight = UITableView.automaticDimension
-        //UIColor.init(hexString: "#f7f1e3")
         tableView.estimatedRowHeight = 70
+        
+//        tapGesture = UITapGestureRecognizer(target: self, action: #selector(endTextFieldEditing))
+//        tableView.addGestureRecognizer(tapGesture)
+//        tapGesture.delegate = self
     }
+    
+    @objc func endTextFieldEditing() {
+        print("endTextFieldEditing() pressed")
+
+        for cur in tableView.visibleCells {
+            let curX = cur as! MajorItemCell
+            
+            if curX.reuseIdentifier == "AddNewItemCell" {
+                return
+            }
+            
+            if curX.titleTextField.isFirstResponder {
+                curX.titleTextField.resignFirstResponder()
+                //curX.updateMajorItemLabel()
+                //curX.disableTapAwayGesture()
+            }
+        }
+    }
+    
+//    @objc func enableTapAwayGesture() {
+//        print("this weird ass function is called")
+//        for cur in tableView.visibleCells {
+//            let curX = cur as! MajorItemCell
+//            curX.addGestureRecognizer(tapGesture)
+//        }
+//
+//        //        for cur in tableView.visibleCells {
+////            let curX = cur as! MajorItemCell
+////
+////            if curX.reuseIdentifier == "AddNewItemCell" {
+////                return
+////            }
+////
+////            curX.enableTapAwayGesture()
+////        }
+//    }
     
     //MARK: - TableView Datasource Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -40,16 +81,14 @@ class MajorViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-        //print(indexPath.row)
         if indexPath.row != majorItems?.count {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "MajorItemCell", for: indexPath) as! MajorItemCell
             
             cell.delegate = self
-            
-            //cell.textLabel?.text = majorItems?[indexPath.row].name
+            cell.majorItem = majorItems?[indexPath.row]
             cell.majorItemCellTitle.text = majorItems?[indexPath.row].name
+            cell.titleTextField.text = majorItems?[indexPath.row].name
             
             //update statusLabel
             numCompletedTasks = 0
@@ -66,13 +105,12 @@ class MajorViewController: UITableViewController {
                 }
             }
             
-            cell.majorItemCellTitle.isUserInteractionEnabled = true
-            let tap = UIGestureRecognizer(target: MajorItemCell.self, action: #selector(MajorItemCell.editCellTitle))
-            cell.majorItemCellTitle.addGestureRecognizer(tap)
+            cell.configureCell()
             
             cell.listStatusLabel.text = "\(numCompletedTasks ?? 0) / \(numTotalTasks ?? 0)"
             
             cell.backgroundColor = UIColor.init(hexString: "#f7f1e3")
+            
             return cell
 
         } else {
@@ -88,13 +126,51 @@ class MajorViewController: UITableViewController {
 
     //MARK: - TableView Delegate Methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //print(indexPath.row)
-        if tableView.cellForRow(at: indexPath)?.reuseIdentifier == "AddNewItemCell" {
-            //print("Butts")
+        print(indexPath.row)
+        let selCell = tableView.cellForRow(at: indexPath) as! MajorItemCell
+        var responderResigned = false
+        
+        if selCell.reuseIdentifier == "AddNewItemCell" {
+            print("Adding new item.")
             self.addMajorItem(self)
+            return
         } else {
+            for cur in tableView.visibleCells as! [MajorItemCell] {
+                if cur.reuseIdentifier != "AddNewItemCell" {
+                    if cur.titleTextField.isFirstResponder {
+                        cur.titleTextField.resignFirstResponder()
+                        responderResigned = true
+                        selCell.setSelected(false, animated: false)
+                    }
+                }
+            }
+        }
+        
+        if !responderResigned {
             performSegue(withIdentifier: "goToMinorList", sender: self)
         }
+            
+        
+//        for curX in tableView.visibleCells as! [MajorItemCell] {
+            //let curX = cur as! MajorItemCell
+            
+//            if selCell.reuseIdentifier == "AddNewItemCell" {
+//                print("Adding new item.")
+//                self.addMajorItem(self)
+//                return
+//            } else if selCell.isEqual(curX) && curX.titleTextField.isFirstResponder {
+//                curX.titleTextField.resignFirstResponder()
+//                performSegue(withIdentifier: "goToMinorList", sender: self)
+//            } else if curX.titleTextField.isFirstResponder {
+//                curX.titleTextField.resignFirstResponder()
+//                return
+//            }
+//        }
+//
+//        if tableView.cellForRow(at: indexPath)?.reuseIdentifier == "AddNewItemCell" {
+//        } else {
+//            performSegue(withIdentifier: "goToMinorList", sender: self)
+//        }
         
     }
     
@@ -151,11 +227,7 @@ class MajorViewController: UITableViewController {
         majorItems = realm.objects(MajorItem.self)
         
         tableView.reloadData()
-    }
-    
-    @IBAction func startEditing(_ sender: UIBarButtonItem) {
-    }
-    
+    }    
     
 }
 

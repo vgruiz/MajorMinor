@@ -40,27 +40,33 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <textField hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="TextField" borderStyle="bezel" placeholder="test" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="9VB-PI-i7W">
-                                            <rect key="frame" x="28" y="11" width="79" height="60"/>
+                                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="TextField" placeholder="test" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9VB-PI-i7W">
+                                            <rect key="frame" x="28" y="11" width="73" height="60"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="ygq-8N-8EA"/>
                                             </constraints>
                                             <nil key="textColor"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <textInputTraits key="textInputTraits"/>
-                                            <connections>
-                                                <action selector="titleTextField:" destination="em2-E3-uA0" eventType="editingDidBegin" id="lVu-Ca-OMd"/>
-                                            </connections>
                                         </textField>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.29999999999999999" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="checkmark" translatesAutoresizingMaskIntoConstraints="NO" id="ao2-KZ-hFs">
+                                            <rect key="frame" x="295" y="31" width="20" height="20"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="20" id="KVx-iz-1Sr"/>
+                                                <constraint firstAttribute="width" constant="20" id="jtE-uo-E4j"/>
+                                            </constraints>
+                                        </imageView>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="7Nt-Xo-nto" firstAttribute="bottom" secondItem="A9a-Nb-jak" secondAttribute="bottomMargin" id="3Tv-3F-Igw"/>
+                                        <constraint firstItem="ao2-KZ-hFs" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9VB-PI-i7W" secondAttribute="trailing" constant="8" id="6G7-Wm-chF"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="yML-F6-iCK" secondAttribute="trailing" constant="8" id="7k1-ZW-dHS"/>
-                                        <constraint firstItem="yML-F6-iCK" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="7Nt-Xo-nto" secondAttribute="trailing" constant="8" id="DJK-Bc-3Sj"/>
                                         <constraint firstItem="9VB-PI-i7W" firstAttribute="leading" secondItem="A9a-Nb-jak" secondAttribute="leadingMargin" constant="8" id="HiT-F9-K5a"/>
+                                        <constraint firstItem="ao2-KZ-hFs" firstAttribute="centerY" secondItem="A9a-Nb-jak" secondAttribute="centerY" id="Od6-O7-IHd"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="9VB-PI-i7W" secondAttribute="bottom" id="RpF-6H-XgW"/>
                                         <constraint firstItem="9VB-PI-i7W" firstAttribute="top" secondItem="A9a-Nb-jak" secondAttribute="topMargin" id="RwG-VF-doc"/>
-                                        <constraint firstItem="yML-F6-iCK" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9VB-PI-i7W" secondAttribute="trailing" constant="8" id="T8w-Ml-GeT"/>
+                                        <constraint firstItem="yML-F6-iCK" firstAttribute="leading" secondItem="ao2-KZ-hFs" secondAttribute="trailing" constant="10" id="T00-5V-VTQ"/>
+                                        <constraint firstItem="ao2-KZ-hFs" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="7Nt-Xo-nto" secondAttribute="trailing" constant="8" id="dPo-d7-iDH"/>
                                         <constraint firstItem="7Nt-Xo-nto" firstAttribute="top" secondItem="A9a-Nb-jak" secondAttribute="topMargin" id="e9g-iV-kpr"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="yML-F6-iCK" secondAttribute="bottom" id="i1v-ba-IaR"/>
                                         <constraint firstItem="yML-F6-iCK" firstAttribute="top" secondItem="A9a-Nb-jak" secondAttribute="topMargin" id="kZ2-u4-rxw"/>
@@ -68,6 +74,7 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="checkmark" destination="ao2-KZ-hFs" id="1hY-W9-2lN"/>
                                     <outlet property="listStatusLabel" destination="yML-F6-iCK" id="qsp-4t-LUx"/>
                                     <outlet property="majorItemCellTitle" destination="7Nt-Xo-nto" id="cui-D2-TB9"/>
                                     <outlet property="titleTextField" destination="9VB-PI-i7W" id="8RB-Zw-cxe"/>
@@ -202,4 +209,7 @@
             <point key="canvasLocation" x="-214" y="117"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="checkmark" width="24" height="24"/>
+    </resources>
 </document>

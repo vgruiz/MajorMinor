@@ -31,7 +31,7 @@
                                             <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="this is a multiline " textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Nt-Xo-nto">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="this is a multiline " textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Nt-Xo-nto" userLabel="Label">
                                             <rect key="frame" x="28" y="11" width="131" height="60"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="jbC-eL-gST"/>
@@ -74,10 +74,10 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="checkmark" destination="ao2-KZ-hFs" id="1hY-W9-2lN"/>
+                                    <outlet property="checkmark" destination="ao2-KZ-hFs" id="Sj1-a1-T6a"/>
                                     <outlet property="listStatusLabel" destination="yML-F6-iCK" id="qsp-4t-LUx"/>
-                                    <outlet property="majorItemCellTitle" destination="7Nt-Xo-nto" id="cui-D2-TB9"/>
-                                    <outlet property="titleTextField" destination="9VB-PI-i7W" id="8RB-Zw-cxe"/>
+                                    <outlet property="majorItemTitleLabel" destination="7Nt-Xo-nto" id="EHU-ld-LUe"/>
+                                    <outlet property="majorItemTitleTextField" destination="9VB-PI-i7W" id="xCI-4u-v1E"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AddNewItemCell" rowHeight="40" id="H6Q-ej-GL1" customClass="MajorItemCell" customModule="MajorMinor" customModuleProvider="target">
@@ -133,7 +133,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Minor Item Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HjP-tS-6Lk">
-                                            <rect key="frame" x="28" y="11" width="326" height="54"/>
+                                            <rect key="frame" x="28" y="11" width="119" height="54"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="9c1-QU-Mlz"/>
                                             </constraints>
@@ -141,16 +141,27 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Zg9-Ee-pfG" userLabel="Item Title Text Field">
+                                            <rect key="frame" x="28" y="27.5" width="9" height="21"/>
+                                            <color key="backgroundColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <nil key="textColor"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <textInputTraits key="textInputTraits"/>
+                                        </textField>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="HjP-tS-6Lk" firstAttribute="leading" secondItem="4D1-aR-Xpw" secondAttribute="leadingMargin" constant="8" id="DGE-bA-GLc"/>
                                         <constraint firstItem="HjP-tS-6Lk" firstAttribute="top" secondItem="4D1-aR-Xpw" secondAttribute="topMargin" id="KiJ-GM-7NU"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="HjP-tS-6Lk" secondAttribute="bottom" id="QA5-TO-nUX"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="HjP-tS-6Lk" secondAttribute="trailing" constant="8" id="YC2-ZZ-Fmf"/>
+                                        <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="HjP-tS-6Lk" secondAttribute="trailing" constant="8" id="YC2-ZZ-Fmf"/>
+                                        <constraint firstItem="Zg9-Ee-pfG" firstAttribute="leading" secondItem="4D1-aR-Xpw" secondAttribute="leadingMargin" constant="8" id="b0z-gm-LA7"/>
+                                        <constraint firstItem="Zg9-Ee-pfG" firstAttribute="centerY" secondItem="4D1-aR-Xpw" secondAttribute="centerY" id="hq8-TD-1mU"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Zg9-Ee-pfG" secondAttribute="trailing" constant="8" id="sw6-xB-3Yk"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="minorItemCellTitle" destination="HjP-tS-6Lk" id="Bhl-6L-hwt"/>
+                                    <outlet property="minorItemTitleLabel" destination="HjP-tS-6Lk" id="Bhl-6L-hwt"/>
+                                    <outlet property="minorItemTitleTextField" destination="Zg9-Ee-pfG" id="TbH-tK-ARa"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AddNewItemCell" rowHeight="40" id="V0l-c4-2A9" customClass="MinorItemCell" customModule="MajorMinor" customModuleProvider="target">

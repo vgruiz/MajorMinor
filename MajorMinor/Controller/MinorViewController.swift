@@ -31,8 +31,6 @@ class MinorViewController: UITableViewController {
         tableView.backgroundColor = UIColor.init(hexString: "#ffda79")
         
         loadItems()
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        //self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
 
     // MARK: - Table view data source
@@ -44,32 +42,24 @@ class MinorViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if indexPath.row != minorItems?.count {
-            
             let cell = tableView.dequeueReusableCell(withIdentifier: "MinorCell", for: indexPath) as! MinorItemCell
-            
+            cell.configure()
             cell.delegate = self
+            cell.minorItem = minorItems?[indexPath.row]
+            cell.itemTitleLabel.text = minorItems?[indexPath.row].name
+            cell.itemTitleTextField.text = minorItems?[indexPath.row].name
+            cell.selectionStyle = .none
+            cell.backgroundColor = UIColor.init(hexString: "#f7f1e3")
             
             if let minorItem = minorItems?[indexPath.row] {
-                if minorItem.discarded {
-                    cell.minorItemCellTitle.text = minorItem.name + " (discarded)"
-                } else {
-                    cell.minorItemCellTitle.text = minorItem.name
-                }
-                
-                if minorItem.complete {
-                    cell.accessoryType = .checkmark
-                } else {
-                    cell.accessoryType = .none
-                }
+                cell.minorItemTitleLabel.text = minorItem.discarded ? minorItem.name + " (discarded)" : minorItem.name
+                cell.accessoryType = minorItem.complete ? .checkmark : .none
             }
-            
-            cell.backgroundColor = UIColor.init(hexString: "#f7f1e3")
             
             return cell
         } else {
             return tableView.dequeueReusableCell(withIdentifier: "AddNewItemCell", for: indexPath) as! MinorItemCell
         }
-        
     }
     
     //TODO: Make this edit the label within the tableView
@@ -77,8 +67,16 @@ class MinorViewController: UITableViewController {
         
         if tableView.cellForRow(at: indexPath)?.reuseIdentifier == "AddNewItemCell" {
             self.addMinorItem(UIBarButtonItem())
+            return
         }
         
+        for cur in tableView.visibleCells as! [MinorItemCell] {
+            if cur.reuseIdentifier != "AddNewItemCell" {
+                if cur.itemTitleTextField.isFirstResponder {
+                    cur.itemTitleTextField.resignFirstResponder()
+                }
+            }
+        }
     }
 
     @IBAction func startEditing(_ sender: Any) {

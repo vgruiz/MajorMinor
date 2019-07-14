@@ -26,47 +26,7 @@ class MajorViewController: UITableViewController, UIGestureRecognizerDelegate, U
         loadItems()
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 70
-        
-//        tapGesture = UITapGestureRecognizer(target: self, action: #selector(endTextFieldEditing))
-//        tableView.addGestureRecognizer(tapGesture)
-//        tapGesture.delegate = self
     }
-    
-    @objc func endTextFieldEditing() {
-        print("endTextFieldEditing() pressed")
-
-        for cur in tableView.visibleCells {
-            let curX = cur as! MajorItemCell
-            
-            if curX.reuseIdentifier == "AddNewItemCell" {
-                return
-            }
-            
-            if curX.titleTextField.isFirstResponder {
-                curX.titleTextField.resignFirstResponder()
-                //curX.updateMajorItemLabel()
-                //curX.disableTapAwayGesture()
-            }
-        }
-    }
-    
-//    @objc func enableTapAwayGesture() {
-//        print("this weird ass function is called")
-//        for cur in tableView.visibleCells {
-//            let curX = cur as! MajorItemCell
-//            curX.addGestureRecognizer(tapGesture)
-//        }
-//
-//        //        for cur in tableView.visibleCells {
-////            let curX = cur as! MajorItemCell
-////
-////            if curX.reuseIdentifier == "AddNewItemCell" {
-////                return
-////            }
-////
-////            curX.enableTapAwayGesture()
-////        }
-//    }
     
     //MARK: - TableView Datasource Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -76,24 +36,24 @@ class MajorViewController: UITableViewController, UIGestureRecognizerDelegate, U
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        //for when you return to the MajorViewController, to update the statusLabel
+        //when you return to the MajorViewController, to update the statusLabel
         tableView.reloadData()
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+       
         if indexPath.row != majorItems?.count {
-            
             let cell = tableView.dequeueReusableCell(withIdentifier: "MajorItemCell", for: indexPath) as! MajorItemCell
-            
             cell.delegate = self
+            cell.configure()
             cell.majorItem = majorItems?[indexPath.row]
-            cell.majorItemCellTitle.text = majorItems?[indexPath.row].name
-            cell.titleTextField.text = majorItems?[indexPath.row].name
+            cell.itemTitleLabel.text = majorItems?[indexPath.row].name
+            cell.itemTitleTextField.text = majorItems?[indexPath.row].name
+            cell.backgroundColor = UIColor.init(hexString: "#f7f1e3")
             
             //update statusLabel
             numCompletedTasks = 0
             numTotalTasks = 0
-            
             if let minorItems = majorItems?[indexPath.row].minorItems {
                 for x in minorItems {
                     if x.complete {
@@ -104,22 +64,15 @@ class MajorViewController: UITableViewController, UIGestureRecognizerDelegate, U
                     }
                 }
             }
-            
-            cell.configureCell()
-            
             cell.listStatusLabel.text = "\(numCompletedTasks ?? 0) / \(numTotalTasks ?? 0)"
-            
-            cell.backgroundColor = UIColor.init(hexString: "#f7f1e3")
             
             return cell
 
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "AddNewItemCell", for: indexPath) as! MajorItemCell
-            
             cell.delegate = self
             
             return cell
-            
         }
         
     }
@@ -132,13 +85,13 @@ class MajorViewController: UITableViewController, UIGestureRecognizerDelegate, U
         
         if selCell.reuseIdentifier == "AddNewItemCell" {
             print("Adding new item.")
-            self.addMajorItem(self)
+            addMajorItem(self)
             return
         } else {
             for cur in tableView.visibleCells as! [MajorItemCell] {
                 if cur.reuseIdentifier != "AddNewItemCell" {
-                    if cur.titleTextField.isFirstResponder {
-                        cur.titleTextField.resignFirstResponder()
+                    if cur.itemTitleTextField.isFirstResponder {
+                        cur.itemTitleTextField.resignFirstResponder()
                         responderResigned = true
                         selCell.setSelected(false, animated: false)
                     }
@@ -149,37 +102,16 @@ class MajorViewController: UITableViewController, UIGestureRecognizerDelegate, U
         if !responderResigned {
             performSegue(withIdentifier: "goToMinorList", sender: self)
         }
-            
-        
-//        for curX in tableView.visibleCells as! [MajorItemCell] {
-            //let curX = cur as! MajorItemCell
-            
-//            if selCell.reuseIdentifier == "AddNewItemCell" {
-//                print("Adding new item.")
-//                self.addMajorItem(self)
-//                return
-//            } else if selCell.isEqual(curX) && curX.titleTextField.isFirstResponder {
-//                curX.titleTextField.resignFirstResponder()
-//                performSegue(withIdentifier: "goToMinorList", sender: self)
-//            } else if curX.titleTextField.isFirstResponder {
-//                curX.titleTextField.resignFirstResponder()
-//                return
-//            }
-//        }
-//
-//        if tableView.cellForRow(at: indexPath)?.reuseIdentifier == "AddNewItemCell" {
-//        } else {
-//            performSegue(withIdentifier: "goToMinorList", sender: self)
-//        }
         
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destVC = segue.destination as! MinorViewController
-
+        
         if let indexPath = tableView.indexPathForSelectedRow {
             destVC.selectedMajorItem = majorItems?[indexPath.row]
         }
+        
     }
     
     //MARK: - Data Manipulation Methods
@@ -225,7 +157,6 @@ class MajorViewController: UITableViewController, UIGestureRecognizerDelegate, U
     
     func loadItems() {
         majorItems = realm.objects(MajorItem.self)
-        
         tableView.reloadData()
     }    
     
@@ -241,7 +172,6 @@ extension MajorViewController: SwipeTableViewCellDelegate {
 
         let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
             // handle action by updating model with deletion
-
             if let itemForDeletion = self.majorItems?[indexPath.row] {
                 do {
                     try self.realm.write {
@@ -251,7 +181,7 @@ extension MajorViewController: SwipeTableViewCellDelegate {
                     print("Error deleting Major Item, \(error)")
                 }
             }
-            //self.tableView.deleteRows(at: [indexPath], with: .none)
+            
             self.majorItems = self.realm.objects(MajorItem.self)
             self.loadItems()
         }
@@ -260,13 +190,12 @@ extension MajorViewController: SwipeTableViewCellDelegate {
         deleteAction.image = UIImage(named: "delete-icon")
         return [deleteAction]
     }
-//
+
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
         var options = SwipeOptions()
 
         options.expansionStyle = .selection
 
         return options
-
     }
 }
